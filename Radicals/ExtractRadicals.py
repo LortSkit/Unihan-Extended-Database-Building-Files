@@ -15,7 +15,7 @@ def isradical(radstroke: str) -> tuple[bool, str, str]:
     rad, stroke = radstroke.split(".")
     if stroke == '0' or stroke[0] == "-":
         return True, rad, stroke
-    return False, "", ""
+    return False, rad, stroke
 
 
 def removeapostrophe(str: str) -> float:
@@ -116,6 +116,7 @@ def __main__():
         new, old = list(map(lambda x: x.split(
             "#")[0].strip(), line.split(";")))
         if "U+"+old not in sortedrads["Unicode"].tolist():
+            print("U+"+new, chr(int(new, 16)))
             match new:
                 case "2E8B":  # ⺋ 㔾 -> 卩
                     kangxi = "26"
@@ -195,3 +196,7 @@ def __main__():
     sortedrads.to_csv(generated + "sorted_radicals_extra.txt", sep=";")
 
     ###############################################################
+
+
+if __name__ == "__main__":
+    __main__()
