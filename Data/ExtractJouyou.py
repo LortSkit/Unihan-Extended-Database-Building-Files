@@ -11,10 +11,15 @@ def jouyoueval(x):
     return list(x)
 
 
+datafolder = "./"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
+
+
 def __main__():
 
     # Shinjitai;Kyūjitai;Grade
-    jouyoudb = pd.read_csv("./JouyouKanjiExcel.txt",
+    jouyoudb = pd.read_csv(resources + "./JouyouKanjiExcel.txt",
                            # no idea why it's utf-16, like, how did i do that?
                            sep=";", converters={"Kyūjitai": jouyoueval}, encoding="utf-16")
     print(jouyoudb)
@@ -42,4 +47,4 @@ def __main__():
     jouyououtput = jouyoubetter.copy()
     jouyououtput["Kyūjitai"] = list(map(
         lambda x: "NaN" if x is np.nan else "[" + ",".join(x) + "]", jouyououtput["Kyūjitai"].tolist()))
-    jouyououtput.to_csv("./jouyou.txt", sep=";")
+    jouyououtput.to_csv(generated + "./jouyou.txt", sep=";")

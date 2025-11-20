@@ -7,6 +7,8 @@ import pandas as pd
 import os
 
 datafolder = "../Data/"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
 
 filenames = [f"level-{x}.txt" for x in range(1, 3+1)]
 
@@ -49,12 +51,12 @@ def getcolvals(db: pd.DataFrame, char: str) -> list[str]:
 
 
 def __main__():
-    db = pd.read_csv(datafolder + "variants_extra.txt", sep=";", converters={'CSimplified': myeval, 'CTraditional': myeval,
-                                                                             'CSemanticVariant': myeval, 'CContextDependentVariant': myeval, 'CShapeVariant': myeval, 'AMistakenVariant': myeval, 'JSimplified': myeval, 'JTraditional': myeval})
+    db = pd.read_csv(generated + "variants_extra.txt", sep=";", converters={'CSimplified': myeval, 'CTraditional': myeval,
+                                                                            'CSemanticVariant': myeval, 'CContextDependentVariant': myeval, 'CShapeVariant': myeval, 'AMistakenVariant': myeval, 'JSimplified': myeval, 'JTraditional': myeval})
     db = db.set_index("Unicode")
     print(db)
 
-    jouyoudb = pd.read_csv(datafolder + "jouyou.txt", sep=";",
+    jouyoudb = pd.read_csv(generated + "jouyou.txt", sep=";",
                            converters={'Kyūjitai': myeval})
     jouyoudb = jouyoudb.set_index("Unicode")
     print(jouyoudb)
@@ -64,7 +66,7 @@ def __main__():
     gradeindeces = []
     i = 1
     for filename in filenames:
-        with open(datafolder + filename, "r", encoding="utf-8") as f:
+        with open(resources + filename, "r", encoding="utf-8") as f:
             lines = [line.rstrip() for line in f]
             f.close()
         for line in lines:  # TODO: Also go through their traditional counterparts and add them as well
@@ -174,15 +176,15 @@ def __main__():
 
     outputfile = "\n".join(alllevels)
 
-    with open(datafolder + "commonality_with_variants_temp.txt", "w", encoding="utf-8") as o:
+    with open(generated + "commonality_with_variants_temp.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
 
-    betteroutput = pd.read_csv(datafolder + "commonality_with_variants_temp.txt", sep=";", converters={'CCommonality': tempeval, 'TCommonality': tempeval, 'JCommonality': tempeval, 'CSimplified': tempeval, 'CTraditional': tempeval,
-                                                                                                       'CSemanticVariant': tempeval, 'CContextDependentVariant': tempeval, 'CShapeVariant': tempeval, 'AMistakenVariant': tempeval, 'JSimplified': tempeval, 'JTraditional': tempeval})
+    betteroutput = pd.read_csv(generated + "commonality_with_variants_temp.txt", sep=";", converters={'CCommonality': tempeval, 'TCommonality': tempeval, 'JCommonality': tempeval, 'CSimplified': tempeval, 'CTraditional': tempeval,
+                                                                                                      'CSemanticVariant': tempeval, 'CContextDependentVariant': tempeval, 'CShapeVariant': tempeval, 'AMistakenVariant': tempeval, 'JSimplified': tempeval, 'JTraditional': tempeval})
 
     betteroutput = betteroutput.set_index("Unicode")
     betteroutput = betteroutput.sort_values(
         by="Unicode", key=lambda col: pd.Series([int(x[2:], 16) for x in col]))
-    betteroutput.to_csv(datafolder + "commonality_with_variants.txt", sep=";")
-    os.remove(datafolder + "commonality_with_variants_temp.txt")
+    betteroutput.to_csv(generated + "commonality_with_variants.txt", sep=";")
+    os.remove(generated + "commonality_with_variants_temp.txt")

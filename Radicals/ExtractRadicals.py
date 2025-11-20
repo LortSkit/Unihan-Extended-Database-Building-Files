@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 
 datafolder = "../Data/"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
 
 # %%%%%%%%%%%%%%%%%%%% EXTRACT FROM UNIHAN%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,7 +43,7 @@ def __main__():
 
     ##################### EXTRACT FROM UNIHAN######################
 
-    with open(datafolder + "Unihan_IRGSources.txt", "r", encoding="utf-8") as f:
+    with open(resources + "Unihan_IRGSources.txt", "r", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
         f.close()
 
@@ -79,22 +81,22 @@ def __main__():
 
     outputfile = "\n".join(output)
 
-    with open(datafolder + "radicals.txt", "w", encoding="utf-8") as o:
+    with open(generated + "radicals.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
 
-    db = pd.read_csv(datafolder + "radicals.txt", sep=";", header=None)
+    db = pd.read_csv(generated + "radicals.txt", sep=";", header=None)
     db.columns = ["Unicode", "Char", "RadicalCode", "StrokesAfterRadical"]
     db = db.sort_values(by="RadicalCode", key=lambda col: pd.Series([removeapostrophe(
         x)+float(int(db["StrokesAfterRadical"][i])/100)+float(int(db["Unicode"][i][2:], 16)/1000000000) for i, x in enumerate(col)]))
     db = db.set_index("Unicode")
-    db.to_csv(datafolder + "sorted_radicals.txt", sep=";")
+    db.to_csv(generated + "sorted_radicals.txt", sep=";")
 
     ###############################################################
 
     ##################### ADDITIONAL RADICALS######################
 
-    with open(datafolder + "EquivalentUnifiedIdeograph.txt", "r", encoding="utf-8") as f:
+    with open(resources + "EquivalentUnifiedIdeograph.txt", "r", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
         f.close()
 
@@ -190,6 +192,6 @@ def __main__():
     sortedrads = sortedrads.sort_values(by="RadicalCode", key=lambda col: pd.Series([removeapostropheagain(
         x)+float(int(sortedrads["StrokesAfterRadical"][i])/100)+float(int(sortedrads["Unicode"][i][2:], 16)/1000000000) for i, x in enumerate(col)]))
     sortedrads = sortedrads.set_index("Unicode")
-    sortedrads.to_csv(datafolder + "sorted_radicals_extra.txt", sep=";")
+    sortedrads.to_csv(generated + "sorted_radicals_extra.txt", sep=";")
 
     ###############################################################

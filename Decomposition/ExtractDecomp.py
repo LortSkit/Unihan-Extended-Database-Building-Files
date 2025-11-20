@@ -6,6 +6,8 @@ import pandas as pd
 import os
 
 datafolder = "../Data/"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
 
 # %%%%%%%%%%%%%%%%%%%% REMOVE PRIVATE CHARS%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,7 +46,7 @@ def ischinese(hexstr: str) -> bool:
 def __main__():
 
     ##################### REMOVE PRIVATE CHARS#####################
-    with open(datafolder + "char_v1.0.txt", "r", encoding="utf-8") as f:
+    with open(resources + "char_v1.0.txt", "r", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
         f.close()
 
@@ -67,7 +69,7 @@ def __main__():
 
     outputfile = "\n".join(truelines)
 
-    with open(datafolder + "char_v1.0_output.txt", "w", encoding="utf-8") as o:
+    with open(generated + "char_v1.0_output.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
     ###############################################################
@@ -93,11 +95,11 @@ def __main__():
 
     outputfile = "\n".join(decomps)
 
-    with open(datafolder + "decomp_output.txt", "w", encoding="utf-8") as o:
+    with open(generated + "decomp_output.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
 
-    db = pd.read_csv(datafolder + "decomp_output.txt", sep=";", header=None)
+    db = pd.read_csv(generated + "decomp_output.txt", sep=";", header=None)
     db.columns = ["Unicode", "Char", "Decomposition"]
     db = db.dropna()
     db = db.sort_values(by="Unicode", key=lambda col: pd.Series(
@@ -105,6 +107,6 @@ def __main__():
     db = db.set_index("Unicode")
     db = db.drop_duplicates()
 
-    db.to_csv(datafolder + "sorted_decomp.txt", sep=";")
-    os.remove(datafolder + "decomp_output.txt")
+    db.to_csv(generated + "sorted_decomp.txt", sep=";")
+    os.remove(generated + "decomp_output.txt")
     ###############################################################

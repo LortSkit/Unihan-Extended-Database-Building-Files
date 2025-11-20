@@ -4,6 +4,8 @@ The repo is a collection of python files that will build a merged database of ha
 
 # Resources
 
+This is how to attain all the resources needed for the `RunAll.py` script to run. When attained, they have to be placed in the `Data/Resources/` folder - NOTE: `characterdecomposition.csv` as well as `JouyouKanjiExcelt.txt` need a little extra work to be made in the right format, so refer to their respective guides below for more information.
+
 For explanation of unihan.zip, please see [The tr38 report from Unicode](https://www.unicode.org/reports/tr38/). For any files used, please gather them from here, and place them in the `Data/` folder
 
 `Unihan.zip` can be found [here](https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip) and contains the following relevant files:

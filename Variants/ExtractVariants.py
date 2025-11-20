@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 
 datafolder = "../Data/"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
 
 # %%%%%%%%%%%%%%%%%%%% EXTRACT FROM UNIHAN%%%%%%%%%%%%%%%%%%%%%%
 
@@ -38,7 +40,7 @@ def undoeval(x):
 
 def __main__():
     ##################### EXTRACT FROM UNIHAN######################
-    with open(datafolder + "Unihan_Variants.txt", "r", encoding="utf-8") as f:
+    with open(resources + "Unihan_Variants.txt", "r", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
         f.close()
 
@@ -114,11 +116,11 @@ def __main__():
     outputfile = "Unicode;Char;CSimplified;CTraditional;CSemanticVariant;CContextDependentVariant;CShapeVariant;AMistakenVariant\n" + \
         "\n".join(output)
 
-    with open(datafolder + "variants.txt", "w", encoding="utf-8") as o:
+    with open(generated + "variants.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
 
-    db = pd.read_csv(datafolder + "variants.txt", sep=";")
+    db = pd.read_csv(generated + "variants.txt", sep=";")
     db = db.set_index("Unicode")
     print(db)
     ###############################################################
@@ -126,7 +128,7 @@ def __main__():
     ########################### JAPANESE###########################
 
     # Shinjitai;Kyūjitai;Grade
-    jouyoudb = pd.read_csv(datafolder + "jouyou.txt", sep=";",
+    jouyoudb = pd.read_csv(generated + "jouyou.txt", sep=";",
                            converters={'Kyūjitai': myeval})
     jouyoudb = jouyoudb.set_index("Unicode")
     print(jouyoudb)
@@ -195,7 +197,7 @@ def __main__():
     for col in db.columns.to_list()[1:]:
 
         dboutput[col] = list(map(undoeval, dboutput[col].tolist()))
-    dboutput.to_csv(datafolder+"variants_extra.txt", sep=";")
+    dboutput.to_csv(generated+"variants_extra.txt", sep=";")
     print(dboutput)
 
     ###############################################################

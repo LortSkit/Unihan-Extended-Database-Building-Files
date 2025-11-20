@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 
 datafolder = "../Data/"
+resources = datafolder + "Resources/"
+generated = datafolder + "Generated/"
 
 
 def myeval(x):
@@ -72,7 +74,7 @@ def overlap(l1, l2):
     return output
 
 
-db = pd.read_csv(datafolder + "variants.txt", sep=";", converters={'CSimplified': myeval, 'CTraditional': myeval,
+db = pd.read_csv(generated + "variants.txt", sep=";", converters={'CSimplified': myeval, 'CTraditional': myeval,
                  'CSemanticVariant': myeval, 'CContextDependentVariant': myeval, 'CShapeVariant': myeval, 'AMistakenVariant': myeval})
 db = db.set_index("Unicode")
 print(db)
