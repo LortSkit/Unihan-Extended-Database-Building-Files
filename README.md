@@ -69,7 +69,7 @@ With the link to the [Jouyou Kanji list Wikipedia page](https://en.wikipedia.org
 8. Rename columns such that they are just called `Shinjitai`, `Kyūjitai`, and `Grade`
 9. Now with this sheet open, save as a Unicode (\*.txt) file with name `JouyouKanjiExcel.txt`
 10. Open file with notepad, hit ctrl+h to open search and replace
-11. Replace `	` with `;`
+11. Replace '&ensp;' with ';'
 12. Rejoice
 
 ## Other links
