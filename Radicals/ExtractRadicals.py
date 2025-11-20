@@ -79,7 +79,7 @@ def __main__():
                 output.append(unicode + ";" + chr(int(unicodehex, 16)
                                                   ) + ";" + rad + ";" + stroke + "\n")
 
-    outputfile = "\n".join(output)
+    outputfile = "".join(output)
 
     with open(generated + "radicals.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)

@@ -188,3 +188,7 @@ def __main__():
         by="Unicode", key=lambda col: pd.Series([int(x[2:], 16) for x in col]))
     betteroutput.to_csv(generated + "commonality_with_variants.txt", sep=";")
     os.remove(generated + "commonality_with_variants_temp.txt")
+
+
+if __name__ == "__main__":
+    __main__()

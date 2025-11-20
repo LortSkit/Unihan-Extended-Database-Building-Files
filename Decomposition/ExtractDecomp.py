@@ -110,3 +110,7 @@ def __main__():
     db.to_csv(generated + "sorted_decomp.txt", sep=";")
     os.remove(generated + "decomp_output.txt")
     ###############################################################
+
+
+if __name__ == "__main__":
+    __main__()

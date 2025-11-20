@@ -48,3 +48,7 @@ def __main__():
     jouyououtput["Kyūjitai"] = list(map(
         lambda x: "NaN" if x is np.nan else "[" + ",".join(x) + "]", jouyououtput["Kyūjitai"].tolist()))
     jouyououtput.to_csv(generated + "./jouyou.txt", sep=";")
+
+
+if __name__ == "__main__":
+    __main__()
