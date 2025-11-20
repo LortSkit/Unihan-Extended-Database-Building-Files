@@ -1,5 +1,4 @@
 # File made for use with the JouyouKanjiExcelt.txt and level-1.txt & level-2.txt & level-3.txt files (See README.md file for info)
-# TODO: Currently the output of this file is not used anywhere...
 
 
 import numpy as np
@@ -114,6 +113,10 @@ def __main__():
                 for z, stuff in enumerate(alllevels):
                     if unicode in alllevels[z][:10]:
                         actualtrickyindex = z
+                if actualtrickyindex == -1:
+                    print("WHY TF DID IT NOT WORK????C-PART",
+                          unicode, char)
+                    continue
                 alllevels[actualtrickyindex] = newline
             else:
                 alllevels.append(newline)
@@ -122,6 +125,7 @@ def __main__():
                 traditionalvariants = db.loc[unicode]["CTraditional"]
                 if traditionalvariants is not np.nan:
                     ogchar = char
+                    trickyindex = -1
                     for trad in traditionalvariants:
                         if trad == unicode:
                             continue
@@ -150,6 +154,8 @@ def __main__():
 
                         variants = getcolvals(db, char)
                         jcommonality = "NaN"
+                        if trad == "U+85B4":
+                            print("OH SHIT!??!?!")
                         jindeces.append(trad)
                         gradeindeces.append(tcommonality)
                         if trad in jouyoudb.index:
@@ -157,7 +163,20 @@ def __main__():
                         newline = trad + ";"+char + ";" + \
                             ccommonality+";" + tcommonality + ";" + jcommonality + \
                             ";" + ";".join(variants)
-                        alllevels.append(newline)
+                        if trickyindex > -1:
+                            actualtrickyindex = -1
+                            for z, stuff in enumerate(alllevels):
+                                if trad in alllevels[z][:10]:
+                                    actualtrickyindex = z
+                            if actualtrickyindex == -1:
+                                print("WHY TF DID IT NOT WORK????J-PART",
+                                      unicode, ogchar+"->"+char, trad)
+                                continue
+                            # print(unicode, ogchar+"->"+char, trad, "\n",
+                            #       alllevels[actualtrickyindex], "\n", newline)
+                            alllevels[actualtrickyindex] = newline
+                        else:
+                            alllevels.append(newline)
 
         i += 1
 
@@ -182,6 +201,8 @@ def __main__():
 
     betteroutput = pd.read_csv(generated + "commonality_with_variants_temp.txt", sep=";", converters={'CCommonality': tempeval, 'TCommonality': tempeval, 'JCommonality': tempeval, 'CSimplified': tempeval, 'CTraditional': tempeval,
                                                                                                       'CSemanticVariant': tempeval, 'CContextDependentVariant': tempeval, 'CShapeVariant': tempeval, 'AMistakenVariant': tempeval, 'JSimplified': tempeval, 'JTraditional': tempeval})
+    # print(betteroutput.iloc[3408]["Char"], betteroutput.iloc[3146]
+    #       ["Char"], 1)
 
     betteroutput = betteroutput.set_index("Unicode")
     betteroutput = betteroutput.sort_values(

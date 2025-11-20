@@ -35,7 +35,7 @@ For `JouyouKanjiExcelt.txt`, please copy the link of [this Wikipedia page](https
 
 `charlist.txt` can be found in [this repo](https://github.com/elkmovie/hsk30/blob/main)
 
-- Used in files `TODO`.
+- Used in files `ExtractHSK.py`.
 
 ## CJKLib Guide
 

@@ -27,14 +27,14 @@ def makestr(mappings: list[str]) -> str:
 
 def myeval(x):
     if x == "NaN":
-        return np.nan
+        return "NaN"
 
     tempx = x[1:-1]  # removes [ and ]
     return tempx.split(",")
 
 
 def undoeval(x):
-    return "NaN" if x is np.nan else x
+    return "NaN" if x is np.nan else "[" + ",".join(x) + "]" if type(x) == type([""]) else x
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -128,44 +128,44 @@ def __main__():
     ########################### JAPANESE###########################
 
     # Shinjitai;Kyūjitai;Grade
-    jouyoudb = pd.read_csv(generated + "jouyou.txt", sep=";",
-                           converters={'Kyūjitai': myeval})
+    jouyoudb = pd.read_csv(generated + "jouyou.txt",
+                           sep=";", converters={'Kyūjitai': myeval})
     jouyoudb = jouyoudb.set_index("Unicode")
     print(jouyoudb)
 
-    jsimplified = [np.nan]*len(db)
-    jtraditional = [np.nan]*len(db)
+    jsimplified = ["NaN"]*len(db)
+    jtraditional = ["NaN"]*len(db)
 
     for index, row in jouyoudb.iterrows():
-        if jouyoudb.loc[index]["Kyūjitai"] is np.nan:
+        if jouyoudb.loc[index]["Kyūjitai"] == "NaN":
             continue
 
         if index not in db.index:
-            db = pd.concat([db, pd.DataFrame([[index, jouyoudb.loc[index]["Char"], np.nan,
-                                               np.nan, np.nan, np.nan, np.nan, np.nan]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
+            db = pd.concat([db, pd.DataFrame([[index, jouyoudb.loc[index]["Char"], "NaN",
+                                               "NaN", "NaN", "NaN", "NaN", "NaN"]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
 
             jtraditional.append(jouyoudb.loc[index]["Kyūjitai"])
-            jsimplified.append(np.nan)
+            jsimplified.append("NaN")
             for kyuujitai in jouyoudb.loc[index]["Kyūjitai"]:
                 if kyuujitai in db.index:
                     j = db.index.get_indexer([kyuujitai])[0]
                     if j == -1:
                         raise Exception("WTF??")
 
-                    if jsimplified[j] is np.nan:
+                    if jsimplified[j] == "NaN":
                         jsimplified[j] = [index]
                     else:
                         jsimplified[j].append(index)
                 else:
-                    db = pd.concat([db, pd.DataFrame([[kyuujitai, int(kyuujitai[2:], 16), np.nan,
-                                                       np.nan, np.nan, np.nan, np.nan, np.nan]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
-                    jtraditional.append(np.nan)
+                    db = pd.concat([db, pd.DataFrame([[kyuujitai, int(kyuujitai[2:], 16), "NaN",
+                                                       "NaN", "NaN", "NaN", "NaN", "NaN"]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
+                    jtraditional.append("NaN")
                     jsimplified.append([index])
         else:
             j = db.index.get_indexer([index])[0]
             if j == -1:
                 raise Exception("WTF??")
-            if jsimplified[j] is np.nan:
+            if jsimplified[j] == "NaN":
                 jtraditional[j] = jouyoudb.loc[index]["Kyūjitai"]
             else:
                 jtraditional[j].append(jouyoudb.loc[index]["Kyūjitai"])
@@ -175,14 +175,14 @@ def __main__():
                     if j == -1:
                         raise Exception("WTF??")
 
-                    if jsimplified[j] is np.nan:
+                    if jsimplified[j] == "NaN":
                         jsimplified[j] = [index]
                     else:
                         jsimplified[j].append(index)
                 else:
-                    db = pd.concat([db, pd.DataFrame([[kyuujitai, int(kyuujitai[2:], 16), np.nan,
-                                                       np.nan, np.nan, np.nan, np.nan, np.nan]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
-                    jtraditional.append(np.nan)
+                    db = pd.concat([db, pd.DataFrame([[kyuujitai, int(kyuujitai[2:], 16), "NaN",
+                                                       "NaN", "NaN", "NaN", "NaN", "NaN"]], columns=["Unicode"]+db.columns.to_list()).set_index("Unicode")])
+                    jtraditional.append("NaN")
                     jsimplified.append([index])
 
     db["JSimplified"] = jsimplified

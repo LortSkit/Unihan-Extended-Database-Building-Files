@@ -3,6 +3,7 @@ from Variants import ExtractVariants
 from Radicals import ExtractRadicals
 from Decomposition import ExtractDecomp
 from Data import ExtractJouyou
+from Variants import ExtractHSK
 import os
 
 ############################# DATA#############################
@@ -25,4 +26,5 @@ ExtractRadicals.__main__()
 os.chdir(cwd + "/Variants/")
 ExtractVariants.__main__()
 ExtractCommonality.__main__()
+ExtractHSK.__main__()
 ###############################################################
