@@ -151,7 +151,6 @@ def __main__():
                                 tcommonality = gradeindeces[trickyindex] + \
                                     tcommonality
                             else:
-                                trickyindex = jindeces.index(trad)
                                 ccommonality = gradeindeces[trickyindex]
                             # print("OH SHIT WTF NOWWWWW TRAD", "U+"+hex(ord(ogchar))[2:].upper(),
                             #       ogchar, ccommonality + "->" + trad, char, tcommonality)
