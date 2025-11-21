@@ -27,4 +27,5 @@ os.chdir(cwd + "/Variants/")
 ExtractVariants.__main__()
 ExtractCommonality.__main__()
 ExtractHSK.__main__()
+# DO NOT RUN THE WEBSCRAPER EVERY TIME!!!!!
 ###############################################################

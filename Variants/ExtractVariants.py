@@ -20,6 +20,33 @@ def makestr(mappings: list[str]) -> str:
         return "NaN"
     return "[" + ",".join(mappings) + "]"
 
+
+def isNextUnicode(smallerunicode: str, biggerunicode: str) -> bool:
+    if smallerunicode == "U+4DBE" and biggerunicode == "U+4E00":
+        return True
+    elif smallerunicode == "U+9FFA" and biggerunicode == "U+FA11":
+        return True
+    elif smallerunicode == "U+FA18" and biggerunicode == "U+2003E":
+        return True
+    elif smallerunicode == "U+2F8D2" and biggerunicode == "U+30021":
+        return True
+
+    return int(biggerunicode[2:], 16) == int(smallerunicode[2:], 16)+1
+
+
+def getUnicodesBetween(smallerunicode: str, biggerunicode: str) -> list[str]:
+    begin = int(smallerunicode[2:], 16)
+    end = int(biggerunicode[2:], 16)
+    output = []
+    for n in range(begin+1, end):
+        output.append("U+"+hex(n)[2:].upper())
+    return output
+
+
+def basicEval(x):
+    return x
+
+
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%% JAPANESE%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +101,14 @@ def __main__():
             CContextDependentVariant = []  # kSpecializedSemanticVariant
             CShapeVariant = []             # kZVariant
             AMistakenVariant = []          # kSpoofingVariant
+            if not isNextUnicode(currentunicode, unicode):
+                for unicodeinbetween in getUnicodesBetween(currentunicode, unicode):
+                    tobeadded = unicodeinbetween + ";" + \
+                        chr(int(unicodeinbetween[2:], 16)
+                            ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
+                    # print(tobeadded)
+                    output.append(tobeadded)
+
             currentunicode = unicode
 
         keyword = temp[1]
@@ -112,16 +147,28 @@ def __main__():
                     AMistakenVariant = mappings
     output.append(currentunicode + ";" + chr(int(currentunicode[2:], 16)) + ";" + makestr(CSimplified) + ";" + makestr(CTraditional) + ";" + makestr(
         CSemanticVariant) + ";" + makestr(CContextDependentVariant) + ";" + makestr(CShapeVariant) + ";" + makestr(AMistakenVariant))
+    unicode = "U+3347A"
+    for unicodeinbetween in getUnicodesBetween(currentunicode, unicode):
+        tobeadded = unicodeinbetween + ";" + \
+            chr(int(unicodeinbetween[2:], 16)
+                ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
+        # print(tobeadded)
+        output.append(tobeadded)
 
     outputfile = "Unicode;Char;CSimplified;CTraditional;CSemanticVariant;CContextDependentVariant;CShapeVariant;AMistakenVariant\n" + \
         "\n".join(output)
 
-    with open(generated + "variants.txt", "w", encoding="utf-8") as o:
+    with open(generated + "variants_temp.txt", "w", encoding="utf-8") as o:
         o.write(outputfile)
         o.close()
 
-    db = pd.read_csv(generated + "variants.txt", sep=";")
+    db = pd.read_csv(generated + "variants_temp.txt", sep=";")
+    db = pd.read_csv(generated + "variants_temp.txt", sep=";",
+                     converters={col: basicEval for col in db.columns})
     db = db.set_index("Unicode")
+    db = db.sort_values(
+        by="Unicode", key=lambda col: pd.Series([int(x[2:], 16) for x in col]))
+    db.to_csv(generated + "variants.txt", sep=";")
     print(db)
     ###############################################################
 

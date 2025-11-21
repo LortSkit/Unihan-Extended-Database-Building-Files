@@ -35,7 +35,7 @@ def tempeval(x):
 
 def getcolvals(db: pd.DataFrame, char: str) -> list[str]:
     def undoeval(x):
-        return "NaN" if x is np.nan else "[" + ",".join(x) + "]"
+        return "NaN" if (x is np.nan) or (type(x) == type(4.2)) else "[" + ",".join(x) + "]"
     unicode = tounicode(char)
     allcolumns = db.columns[1:]
     if unicode not in db.index:
