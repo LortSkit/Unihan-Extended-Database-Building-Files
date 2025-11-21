@@ -21,25 +21,72 @@ def makestr(mappings: list[str]) -> str:
     return "[" + ",".join(mappings) + "]"
 
 
+def getBlockNumber(unicode: str) -> int:
+    n = int(unicode[2:], 16)
+    if n < int("3400", 16):
+        return 0
+    elif n <= int("4DBF", 16):
+        return 1
+    elif n < int("4E00", 16):
+        return 2
+    elif n <= int("9FFF", 16):
+        return 3
+    elif n < int("F900", 16):
+        return 4
+    elif n <= int("FAD9", 16):
+        return 5
+    elif n < int("20000", 16):
+        return 6
+    elif n <= int("2FA1D", 16):
+        return 7
+    elif n < int("30000", 16):
+        return 8
+    else:
+        return 9
+
+
 def isNextUnicode(smallerunicode: str, biggerunicode: str) -> bool:
-    if smallerunicode == "U+4DBE" and biggerunicode == "U+4E00":
+    if smallerunicode == "U+4DBF" and biggerunicode == "U+4E00":  # U+4DBE U+4E00
         return True
-    elif smallerunicode == "U+9FFA" and biggerunicode == "U+FA11":
+    elif smallerunicode == "U+9FFF" and biggerunicode == "U+F900":  # U+9FFA U+FA11
         return True
-    elif smallerunicode == "U+FA18" and biggerunicode == "U+2003E":
+    elif smallerunicode == "U+FAD9" and biggerunicode == "U+20000":  # U+FA18 U+2003E
         return True
-    elif smallerunicode == "U+2F8D2" and biggerunicode == "U+30021":
+    elif smallerunicode == "U+2FA1D" and biggerunicode == "U+30000":  # U+2F8D2 U+30021
         return True
 
-    return int(biggerunicode[2:], 16) == int(smallerunicode[2:], 16)+1
+    return getBlockNumber(smallerunicode) == getBlockNumber(biggerunicode) and int(biggerunicode[2:], 16) == int(smallerunicode[2:], 16)+1
+
+
+def getNextUnicode(smallerunicode: str) -> str:
+    if smallerunicode == "U+4DBF":
+        return "U+4E00"
+    elif smallerunicode == "U+9FFF":
+        return "U+F900"
+    elif smallerunicode == "U+FAD9":
+        return "U+20000"
+    elif smallerunicode == "U+2FA1D":
+        return "U+30000"
+
+    return "U+"+hex(int(smallerunicode[2:], 16)+1)[2:].upper()
 
 
 def getUnicodesBetween(smallerunicode: str, biggerunicode: str) -> list[str]:
     begin = int(smallerunicode[2:], 16)
     end = int(biggerunicode[2:], 16)
     output = []
-    for n in range(begin+1, end):
-        output.append("U+"+hex(n)[2:].upper())
+    previous = smallerunicode
+    n = begin
+    while n < end or unicode != biggerunicode:
+        n += 1
+        unicode = "U+"+hex(n)[2:].upper()
+        if not isNextUnicode(previous, unicode):
+            unicode = getNextUnicode(previous)
+            n = int(unicode[2:], 16)
+        if unicode == biggerunicode:
+            break
+        output.append(unicode)
+        previous = unicode
     return output
 
 
@@ -106,7 +153,6 @@ def __main__():
                     tobeadded = unicodeinbetween + ";" + \
                         chr(int(unicodeinbetween[2:], 16)
                             ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
-                    # print(tobeadded)
                     output.append(tobeadded)
 
             currentunicode = unicode
@@ -152,7 +198,6 @@ def __main__():
         tobeadded = unicodeinbetween + ";" + \
             chr(int(unicodeinbetween[2:], 16)
                 ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
-        # print(tobeadded)
         output.append(tobeadded)
 
     outputfile = "Unicode;Char;CSimplified;CTraditional;CSemanticVariant;CContextDependentVariant;CShapeVariant;AMistakenVariant\n" + \

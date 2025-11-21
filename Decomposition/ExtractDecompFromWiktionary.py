@@ -49,6 +49,10 @@ def containsStrokes(str: str) -> bool:
     return False
 
 
+def unicodeLessThanEqualTo(uni1, uni2):
+    return int(uni1[2:], 16) <= int(uni2[2:], 16)
+
+
 def getDecomp(char: str) -> str:
     headers = {
         'User-Agent': 'Mozilla/5.0'
@@ -68,31 +72,19 @@ def getDecomp(char: str) -> str:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
-    split = text.split(
-        "composition</a></i>")
-    if len(split) < 2:
-        return "NaN"
-    elif len(split) > 2:
-        return "WTF"
-    else:
-        almost = split[1].split("</a></span>)")[0]
-        temp = almost.split("or")
-        if len(temp) == 1:
-            golden = temp[0]
-        else:
-            golden = temp[0]  # re.sub(r"(.*)", r"", temp[0])
-        newsplit = golden.split(">")
-        temp = list(map(lambda x: x+">", newsplit[:-1])) + [newsplit[-1]]
-        if char == "㐂":
-            print(golden)
-            print()
-            print(newsplit)
-            print()
-            print(temp)
-            print()
-        outputlist = list(map(lambda x: re.sub(r"<.*>", r"", x), temp))
-        output = chineseOnly("".join(filter(lambda x: False if len(
-            x) < 1 else isChineseStr(x) if len(x) > 1 else isChineseChar(x), outputlist)))
+    try:
+        split = text.split(
+            "composition")[1].split(")")[0]
+    except Exception as e:
+        print(char, "caused the following exception\n" + e + "\n\n")
+    almost = split.split("</a></span>)")[0]
+    temp = almost.split("or")
+    golden = temp[0]
+    newsplit = golden.split(">")
+    temp = list(map(lambda x: x+">", newsplit[:-1])) + [newsplit[-1]]
+    outputlist = list(map(lambda x: re.sub(r"<.*>", r"", x), temp))
+    output = chineseOnly("".join(filter(lambda x: False if len(
+        x) < 1 else isChineseStr(x) if len(x) > 1 else isChineseChar(x), outputlist)))
     return output
 
 
@@ -100,17 +92,17 @@ db = pd.read_csv(
     generated + "variants.txt", sep=";", encoding="utf-8")
 db = db.set_index("Unicode")
 
-
-testchars = db["Char"][:10]
+lastrecord = "U+39D0"
 
 # will delete contents of existing file
-with open(generated + "decomp_scrape.txt", "w", encoding="utf-8") as f:
-    f.write("Unicode;Char;Decomposition\n")
-    f.close()
+if lastrecord is None:
+    with open(generated + "decomp_scrape.txt", "w", encoding="utf-8") as f:
+        f.write("Unicode;Char;Decomposition\n")
+        f.close()
 
 for i, (unicode, row) in enumerate(db.iterrows()):
-    if i >= 10:
-        break
+    if unicodeLessThanEqualTo(unicode, lastrecord):
+        continue
     char = row["Char"]
     decomp = getDecomp(char)
 
