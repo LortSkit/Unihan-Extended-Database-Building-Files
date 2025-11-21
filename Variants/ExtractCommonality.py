@@ -68,7 +68,7 @@ def __main__():
         with open(resources + filename, "r", encoding="utf-8") as f:
             lines = [line.rstrip() for line in f]
             f.close()
-        for line in lines:  # TODO: Also go through their traditional counterparts and add them as well
+        for line in lines:
             if len(line) != 1:
                 raise Exception("WTF??" + line + str(len(line)))
             char = line
@@ -114,9 +114,8 @@ def __main__():
                     if unicode in alllevels[z][:10]:
                         actualtrickyindex = z
                 if actualtrickyindex == -1:
-                    print("WHY TF DID IT NOT WORK????C-PART",
-                          unicode, char)
-                    continue
+                    raise Exception(
+                        "WHY TF DID IT NOT WORK????C-PART " + unicode + " " + char)
                 alllevels[actualtrickyindex] = newline
             else:
                 alllevels.append(newline)
@@ -136,26 +135,26 @@ def __main__():
                             # Affected characters:
                             # U+8457 著 Both map to C1
                             # U+962A 阪 Both map to C2
-                            # U+7DDA 線 Now maps ccommonality to C1 instead of C3
-                            # U+5641 噁 Now maps ccommonality to C1 instead of C3
-                            # U+937E 鍾 Now maps ccommonality to C1 instead of C3
-                            # U+860B 蘋 Now maps ccommonality to C1 instead of C3
+                            # U+7DDA 線 Now maps ccommonality to NaN and tcommonality to C1C3
+                            # U+5641 噁 Now maps ccommonality to NaN and tcommonality to C1C3
+                            # U+937E 鍾 Now maps ccommonality to NaN and tcommonality to C1C3
+                            # U+860B 蘋 Now maps ccommonality to NaN and tcommonality to C1C3
                             # For the first two, 著 and 阪, are because they are also traditional version of the unicodes we meet in this loop, U+7740 着 and U+5742 坂 respectively,
                             # however they are also considered distinct from those other two in meaning. Doesn't matter here, cuz they get the same grade C2 anyway
                             # For the last four, 線,噁,鍾, and 蘋, they are the traditional counterparts of some uncommon simplifications, U+7F10 缐, U+2BAC7 𫫇, U+953A 锺, U+2C79F 𬞟
                             # 缐 is a variant of 线 (when simplifying 線)
                             # 𫫇 is a variant of 恶 (when simplifying 噁) (e.g., C4H5NO oxazine = (SIMP) 𫫇嗪/恶嗪 vs (TRAD) 噁嗪)
                             # 锺 is a variant of 钟 (when simplifying 鍾)
-                            # 𬞟 is a variant of 蘋 (when simplifying 蘋) (no idea why this one isn't used as much? Literally contains 頻=频??)
+                            # 𬞟 is a variant of 苹 (when simplifying 蘋)
                             trickyindex = jindeces.index(trad)
-                            ccommonality = gradeindeces[trickyindex]
+                            if trad in ["U+7DDA", "U+5641", "U+937E", "U+860B"]:
+                                tcommonality = gradeindeces[trickyindex] + \
+                                    tcommonality
                             # print("OH SHIT WTF NOWWWWW TRAD", "U+"+hex(ord(ogchar))[2:].upper(),
                             #       ogchar, ccommonality + "->" + trad, char, tcommonality)
 
                         variants = getcolvals(db, char)
                         jcommonality = "NaN"
-                        if trad == "U+85B4":
-                            print("OH SHIT!??!?!")
                         jindeces.append(trad)
                         gradeindeces.append(tcommonality)
                         if trad in jouyoudb.index:
@@ -169,11 +168,8 @@ def __main__():
                                 if trad in alllevels[z][:10]:
                                     actualtrickyindex = z
                             if actualtrickyindex == -1:
-                                print("WHY TF DID IT NOT WORK????J-PART",
-                                      unicode, ogchar+"->"+char, trad)
-                                continue
-                            # print(unicode, ogchar+"->"+char, trad, "\n",
-                            #       alllevels[actualtrickyindex], "\n", newline)
+                                raise Exception(
+                                    "WHY TF DID IT NOT WORK????J-PART " + unicode + " " + ogchar+"->"+char + " " + trad)
                             alllevels[actualtrickyindex] = newline
                         else:
                             alllevels.append(newline)
