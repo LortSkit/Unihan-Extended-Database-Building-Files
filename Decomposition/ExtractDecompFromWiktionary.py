@@ -77,8 +77,7 @@ def getDecomp(char: str) -> str:
     temp = almost.split("or")
     output = []
     for togetdecomp in temp:
-        golden = temp[0]
-        newsplit = golden.split(">")
+        newsplit = togetdecomp.split(">")
         outputlist = list(map(lambda x: x.split("<")[0], newsplit))
         output.append(chineseOnly("".join(outputlist)))
     return output
