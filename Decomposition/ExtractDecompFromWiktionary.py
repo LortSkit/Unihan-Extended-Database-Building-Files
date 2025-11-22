@@ -101,8 +101,8 @@ if lastrecord is None:
 print("Begin webscrape starting with char " +
       ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
 for i, (unicode, row) in enumerate(db.iterrows()):
-    if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
-        continue
+    # if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
+    #     continue
     char = row["Char"]
     decomp = getDecomp(char)
     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
