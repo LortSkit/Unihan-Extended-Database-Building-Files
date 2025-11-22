@@ -72,13 +72,16 @@ def getDecomp(char: str) -> str:
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
     split = text.split(
-        "composition")[1][:700].replace("(page does not exist)", "").split(")")[0]
+        "composition")[1][:2100].replace("(page does not exist)", "").split(")")[0]
     almost = split.split("</a></span>)")[0]
     temp = almost.split("or")
-    golden = temp[0]
-    newsplit = golden.split(">")
-    outputlist = list(map(lambda x: x.split("<")[0], newsplit))
-    return chineseOnly("".join(outputlist))
+    output = []
+    for togetdecomp in temp:
+        golden = temp[0]
+        newsplit = golden.split(">")
+        outputlist = list(map(lambda x: x.split("<")[0], newsplit))
+        output.append(chineseOnly("".join(outputlist)))
+    return output
 
 
 db = pd.read_csv(
@@ -87,7 +90,7 @@ db = db[["Unicode", "Char"]]
 db = db.set_index("Unicode")
 print(db)
 
-lastrecord = "U+34FB"
+lastrecord = None
 
 # will delete contents of existing file
 if lastrecord is None:
@@ -104,7 +107,8 @@ for i, (unicode, row) in enumerate(db.iterrows()):
     char = row["Char"]
     decomp = getDecomp(char)
     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
-        f.write(unicode + ";" + char + ";" + decomp + "\n")
+        f.write(unicode + ";" + char + ";" +
+                decomp.__repr__().replace("'", "") + "\n")
         f.close()
 
 # for i, char in enumerate(["𰻝", "㒪"]):
