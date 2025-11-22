@@ -100,25 +100,25 @@ if lastrecord is None:
         f.close()
 
 # will delete contents of existing file
-# print("Begin webscrape starting with char " +
-#       ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
-# for i, (unicode, row) in enumerate(db.iterrows()):
-#     if i == 0 and lastrecord is not None:
-#         continue
-#     char = row["Char"]
-#     decomp = getDecomp(char)
-#     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
-#         f.write(unicode + ";" + char + ";" +
-#                 decomp.__repr__().replace("'", "") + "\n")
-#         f.close()
-
-difficultChar = ["𰻝", "㒪", "㚓", "刃", "劣", "𠄷"]
-for i, char in enumerate(difficultChar):
-    unicode = "U+" + hex(ord(char))[2:].upper()
+print("Begin webscrape starting with char " +
+      ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
+for i, (unicode, row) in enumerate(db.iterrows()):
+    if i == 0 and lastrecord is not None:
+        continue
+    char = row["Char"]
     decomp = getDecomp(char)
-
-    # will delete contents of existing file
     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
         f.write(unicode + ";" + char + ";" +
                 decomp.__repr__().replace("'", "") + "\n")
         f.close()
+
+# difficultChar = ["𰻝", "㒪", "㚓", "刃", "劣", "𠄷"]
+# for i, char in enumerate(difficultChar):
+#     unicode = "U+" + hex(ord(char))[2:].upper()
+#     decomp = getDecomp(char)
+
+#     # will delete contents of existing file
+#     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
+#         f.write(unicode + ";" + char + ";" +
+#                 decomp.__repr__().replace("'", "") + "\n")
+#         f.close()
