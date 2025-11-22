@@ -72,7 +72,7 @@ def getDecomp(char: str) -> str:
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
     split = re.sub(r"\([^)]*\)", r"", text.split(
-        "composition")[1][:2100]).split(")")[0]
+        ">composition")[1][:2100]).split(")")[0]
     almost = split.split("</a></span>)")[0]
     temp = almost.split("or")
     output = []
@@ -89,7 +89,7 @@ db = db[["Unicode", "Char"]]
 db = db.set_index("Unicode")
 print(db)
 
-lastrecord = None
+lastrecord = "U+52C4"
 
 # will delete contents of existing file
 if lastrecord is None:
@@ -101,8 +101,10 @@ if lastrecord is None:
 print("Begin webscrape starting with char " +
       ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
 for i, (unicode, row) in enumerate(db.iterrows()):
-    # if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
-    #     continue
+    if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
+        continue
+    else:
+        lastrecord = None
     char = row["Char"]
     decomp = getDecomp(char)
     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
@@ -110,7 +112,8 @@ for i, (unicode, row) in enumerate(db.iterrows()):
                 decomp.__repr__().replace("'", "") + "\n")
         f.close()
 
-# for i, char in enumerate(["𰻝", "㒪", "㚓"]):
+# difficultChar = ["𰻝", "㒪", "㚓", "刃", "劣"]
+# for i, char in enumerate(["刃", "劣"]):
 #     unicode = "U+" + hex(ord(char))[2:].upper()
 #     decomp = getDecomp(char)
 
