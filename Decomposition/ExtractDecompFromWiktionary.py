@@ -67,7 +67,7 @@ def getDecomp(char: str) -> str:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have an entry on Wiktionary")
         return "NaN"
-    elif "composition" not in text:
+    elif ">composition" not in text:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
@@ -83,7 +83,7 @@ def getDecomp(char: str) -> str:
     return output
 
 
-lastrecord = "U+575B"
+lastrecord = "U+718E"
 
 db = pd.read_csv(
     generated + "variants.txt", sep=";", encoding="utf-8")
