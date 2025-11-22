@@ -71,8 +71,8 @@ def getDecomp(char: str) -> str:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
-    split = text.split(
-        "composition")[1][:2100].replace("(page does not exist)", "").split(")")[0]
+    split = re.sub(r"\([^)]*\)", r"", text.split(
+        "composition")[1][:2100]).split(")")[0]
     almost = split.split("</a></span>)")[0]
     temp = almost.split("or")
     output = []
@@ -110,11 +110,12 @@ for i, (unicode, row) in enumerate(db.iterrows()):
                 decomp.__repr__().replace("'", "") + "\n")
         f.close()
 
-# for i, char in enumerate(["𰻝", "㒪"]):
+# for i, char in enumerate(["𰻝", "㒪", "㚓"]):
 #     unicode = "U+" + hex(ord(char))[2:].upper()
 #     decomp = getDecomp(char)
 
 #     # will delete contents of existing file
 #     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
-#         f.write(unicode + ";" + char + ";" + decomp + "\n")
+#         f.write(unicode + ";" + char + ";" +
+#                 decomp.__repr__().replace("'", "") + "\n")
 #         f.close()
