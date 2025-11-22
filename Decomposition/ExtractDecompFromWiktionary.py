@@ -83,13 +83,15 @@ def getDecomp(char: str) -> str:
     return output
 
 
+lastrecord = "U+5305"
+
 db = pd.read_csv(
     generated + "variants.txt", sep=";", encoding="utf-8")
 db = db[["Unicode", "Char"]]
 db = db.set_index("Unicode")
+db = db.loc[lastrecord:]
 print(db)
 
-lastrecord = "U+52C4"
 
 # will delete contents of existing file
 if lastrecord is None:
@@ -101,10 +103,8 @@ if lastrecord is None:
 print("Begin webscrape starting with char " +
       ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
 for i, (unicode, row) in enumerate(db.iterrows()):
-    if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
+    if i == 0 and lastrecord is not None:
         continue
-    else:
-        lastrecord = None
     char = row["Char"]
     decomp = getDecomp(char)
     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
