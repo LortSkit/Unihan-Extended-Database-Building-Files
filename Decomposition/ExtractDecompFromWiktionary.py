@@ -62,8 +62,7 @@ def getDecomp(char: str) -> str:
         "https://en.wiktionary.org/wiki/"+char, headers=headers)
     response.raise_for_status()
     response.encoding = "utf-8"
-    text = response.text[:50000][-20000:]
-    del (response)
+    text = response.text[:100000][-70000:]
     if "Wiktionary does not yet have an entry for" in text:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have an entry on Wiktionary")
@@ -72,14 +71,13 @@ def getDecomp(char: str) -> str:
         print("Character U+" + hex(ord(char))
               [2:].upper() + " " + char + " does not have any composition data on Wiktionary")
         return "NaN"
-    try:
-        split = text.split(
-            "composition")[1].replace("(page does not exist)", "").split(")")[0].split("</a></span>)")[0].split("or")[0].split(">")
-    except Exception as e:
-        print(char, "caused the following exception\n" + e + "\n\n")
-        return "NaN"
-    del (text)
-    outputlist = list(map(lambda x: x.split("<")[0], split))
+    split = text.split(
+        "composition")[1][:700].replace("(page does not exist)", "").split(")")[0]
+    almost = split.split("</a></span>)")[0]
+    temp = almost.split("or")
+    golden = temp[0]
+    newsplit = golden.split(">")
+    outputlist = list(map(lambda x: x.split("<")[0], newsplit))
     return chineseOnly("".join(outputlist))
 
 
@@ -89,7 +87,7 @@ db = db[["Unicode", "Char"]]
 db = db.set_index("Unicode")
 print(db)
 
-lastrecord = "U+341D"
+lastrecord = "U+34FB"
 
 # will delete contents of existing file
 if lastrecord is None:
@@ -99,10 +97,8 @@ if lastrecord is None:
 
 # will delete contents of existing file
 print("Begin webscrape starting with char " +
-      "U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16)))
+      ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
 for i, (unicode, row) in enumerate(db.iterrows()):
-    if i > 182:
-        break
     if lastrecord is not None and unicodeLessThanEqualTo(unicode, lastrecord):
         continue
     char = row["Char"]
@@ -112,14 +108,10 @@ for i, (unicode, row) in enumerate(db.iterrows()):
         f.close()
 
 # for i, char in enumerate(["𰻝", "㒪"]):
-#     if i > 10:
-#         break
 #     unicode = "U+" + hex(ord(char))[2:].upper()
-#     if unicodeLessThanEqualTo(unicode, lastrecord):
-#         continue
 #     decomp = getDecomp(char)
 
 #     # will delete contents of existing file
-#     with open(generated + "decomp_scrapeHOLY.txt", "a", encoding="utf-8") as f:
+#     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
 #         f.write(unicode + ";" + char + ";" + decomp + "\n")
 #         f.close()
