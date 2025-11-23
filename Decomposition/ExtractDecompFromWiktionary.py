@@ -59,8 +59,8 @@ def getDecomp(char: str) -> str:
     global unassignedUnicodes
     unicode = "U+" + hex(ord(char))[2:].upper()
     if unicode in unassignedUnicodes:
-        print("The character U+" + hex(ord(char))
-              [2:].upper() + " ? is an unassigned unicode character")
+        print("The character " + unicode +
+              " ? is an unassigned unicode character")
         return "NaN"
 
     headers = {
@@ -123,9 +123,9 @@ def __main__():
             continue
 
         char = row["Char"]
+        decomp = getDecomp(char)
         if unicode in unassignedUnicodes:
             char = "?"
-        decomp = getDecomp(char)
         with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
             f.write(unicode + ";" + char + ";" +
                     decomp.__repr__().replace("'", "") + "\n")
