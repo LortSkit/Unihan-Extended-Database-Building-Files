@@ -8,6 +8,8 @@ datafolder = "../Data/"
 resources = datafolder + "Resources/"
 generated = datafolder + "Generated/"
 
+unassignedUnicodes = ["U+FA6E", "U+FA6F"]
+
 
 def isChineseChar(char: str) -> bool:
     n = ord(char)
@@ -54,13 +56,25 @@ def unicodeLessThanEqualTo(uni1, uni2):
 
 
 def getDecomp(char: str) -> str:
+    global unassignedUnicodes
+    unicode = "U+" + hex(ord(char))[2:].upper()
+    if unicode in unassignedUnicodes:
+        print("The character U+" + hex(ord(char))
+              [2:].upper() + " ? is an unassigned unicode character")
+        return "NaN"
+
     headers = {
         'User-Agent': 'Mozilla/5.0'
     }
 
     response = requests.get(
         "https://en.wiktionary.org/wiki/"+char, headers=headers)
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except Exception as e:
+        print("Checking the website for " + char +
+              " caused the follwing exception:\n"+str(e) + "\n")
+        return "NaN"
     response.encoding = "utf-8"
     text = response.text[:100000][-70000:]
     if "Wiktionary does not yet have an entry for" in text:
@@ -83,42 +97,51 @@ def getDecomp(char: str) -> str:
     return output
 
 
-lastrecord = "U+718E"
+def __main__():
+    global unassignedUnicodes
+    print("WHYYYYY in main " + unassignedUnicodes.__repr__())
+    lastrecord = "U+FA6D"
 
-db = pd.read_csv(
-    generated + "variants.txt", sep=";", encoding="utf-8")
-db = db[["Unicode", "Char"]]
-db = db.set_index("Unicode")
-db = db.loc[lastrecord:]
-print(db)
+    db = pd.read_csv(
+        generated + "variants.txt", sep=";", encoding="utf-8")
+    db = db[["Unicode", "Char"]]
+    db = db.set_index("Unicode")
+    db = db.loc[lastrecord:]
+    print(db)
+
+    # will delete contents of existing file
+    if lastrecord is None:
+        with open(generated + "decomp_scrape.txt", "w", encoding="utf-8") as f:
+            f.write("Unicode;Char;Decomposition\n")
+            f.close()
+
+    # will delete contents of existing file
+    print("Begin webscrape starting with char " +
+          ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
+    for i, (unicode, row) in enumerate(db.iterrows()):
+        if i == 0 and lastrecord is not None:
+            continue
+
+        char = row["Char"]
+        if unicode in unassignedUnicodes:
+            char = "?"
+        decomp = getDecomp(char)
+        with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
+            f.write(unicode + ";" + char + ";" +
+                    decomp.__repr__().replace("'", "") + "\n")
+            f.close()
+
+    # difficultChar = ["𰻝", "㒪", "㚓", "刃", "劣", "𠄷"]
+    # for i, char in enumerate(difficultChar):
+    #     unicode = "U+" + hex(ord(char))[2:].upper()
+    #     decomp = getDecomp(char)
+
+    #     # will delete contents of existing file
+    #     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
+    #         f.write(unicode + ";" + char + ";" +
+    #                 decomp.__repr__().replace("'", "") + "\n")
+    #         f.close()
 
 
-# will delete contents of existing file
-if lastrecord is None:
-    with open(generated + "decomp_scrape.txt", "w", encoding="utf-8") as f:
-        f.write("Unicode;Char;Decomposition\n")
-        f.close()
-
-# will delete contents of existing file
-print("Begin webscrape starting with char " +
-      ("U+3400 㐀" if lastrecord is None else lastrecord + " " + chr(int(lastrecord[2:], 16))))
-for i, (unicode, row) in enumerate(db.iterrows()):
-    if i == 0 and lastrecord is not None:
-        continue
-    char = row["Char"]
-    decomp = getDecomp(char)
-    with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
-        f.write(unicode + ";" + char + ";" +
-                decomp.__repr__().replace("'", "") + "\n")
-        f.close()
-
-# difficultChar = ["𰻝", "㒪", "㚓", "刃", "劣", "𠄷"]
-# for i, char in enumerate(difficultChar):
-#     unicode = "U+" + hex(ord(char))[2:].upper()
-#     decomp = getDecomp(char)
-
-#     # will delete contents of existing file
-#     with open(generated + "decomp_scrape.txt", "a", encoding="utf-8") as f:
-#         f.write(unicode + ";" + char + ";" +
-#                 decomp.__repr__().replace("'", "") + "\n")
-#         f.close()
+if __name__ == "__main__":
+    __main__()

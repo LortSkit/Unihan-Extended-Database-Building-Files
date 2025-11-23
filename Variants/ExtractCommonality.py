@@ -178,15 +178,29 @@ def __main__():
 
         i += 1
 
-    for index, row in jouyoudb.iterrows():
-        if index in jindeces:
+    for unicode, row in jouyoudb.iterrows():
+        if unicode in jindeces:
             continue
         char = row["Char"]
         ccommonality = "NaN"
         tcommonality = "NaN"
         jcommonality = "J" + row["Grade"]
         variants = getcolvals(db, char)
-        newline = index + ";"+char + ";" + \
+        newline = unicode + ";"+char + ";" + \
+            ccommonality+";" + tcommonality + ";" + \
+            jcommonality + ";" + ";".join(variants)
+        jindeces.append(unicode)
+        alllevels.append(newline)
+
+    for unicode, row in db.iterrows():
+        if unicode in jindeces:
+            continue
+        char = row["Char"]
+        ccommonality = "NaN"
+        tcommonality = "NaN"
+        jcommonality = "NaN"
+        variants = getcolvals(db, char)
+        newline = unicode + ";"+char + ";" + \
             ccommonality+";" + tcommonality + ";" + \
             jcommonality + ";" + ";".join(variants)
         alllevels.append(newline)
