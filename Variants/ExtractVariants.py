@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+import time
 
 datafolder = "../Data/"
 resources = datafolder + "Resources/"
@@ -23,55 +24,168 @@ def makestr(mappings: list[str]) -> str:
 
 def getBlockNumber(unicode: str) -> int:
     n = int(unicode[2:], 16)
-    if n < int("3400", 16):
-        return 0
-    elif n <= int("4DBF", 16):
-        return 1
+    if n < int("2E80", 16):
+        return 0  # Gap
+    elif n < int("2E9A", 16):
+        return 1  # CJK Radicals Supplement (Part 1)
+    elif n == int("2E9A", 16):
+        return 2  # Missing
+    elif n < int("2EF4", 16):
+        return 3  # CJK Radicals Supplement (Part 2)
+    elif n < int("2F00", 16):
+        return 4  # Missing
+    elif n < int("2FD6", 16):
+        return 5  # Kangxi Radicals
+    elif n < int("2FE0", 16):
+        return 6  # Missing
+    elif n < int("3400", 16):
+        return 7  # Gap
+    elif n < int("4DC0", 16):
+        return 8  # CJK Unified Ideographs Extension A
     elif n < int("4E00", 16):
-        return 2
-    elif n <= int("9FFF", 16):
-        return 3
+        return 9  # Gap
+    elif n < int("A000", 16):
+        return 10  # CJK Unified Ideographs
     elif n < int("F900", 16):
-        return 4
-    elif n <= int("FAD9", 16):
-        return 5
+        return 11  # Gap
+    elif n < int("FA6E", 16):
+        return 12  # CJK Compatibility Ideographs (Part 1)
+    elif n < int("FA70", 16):
+        return 13  # Missing
+    elif n < int("FADA", 16):
+        return 14  # CJK Compatibility Ideographs (Part 2)
+    elif n < int("FB00", 16):
+        return 15  # Missing
     elif n < int("20000", 16):
-        return 6
-    elif n <= int("2FA1D", 16):
-        return 7
+        return 16  # Gap
+    elif n < int("2A6E0", 16):
+        return 17  # CJK Unified Ideographs Extension B
+    elif n < int("2A700", 16):
+        return 18  # Gap
+    elif n < int("2B740", 16):
+        return 19  # CJK Unified Ideographs Extension C
+    elif n < int("2B81E", 16):
+        return 20  # CJK Unified Ideographs Extension D
+    elif n < int("2B820", 16):
+        return 21  # Missing
+    elif n < int("2CEAE", 16):
+        return 22  # CJK Unified Ideographs Extension E
+    elif n < int("2CEB0", 16):
+        return 23  # Missing
+    elif n < int("2EBE1", 16):
+        return 24  # CJK Unified Ideographs Extension F
+    elif n < int("2EBF0", 16):
+        return 25  # Missing
+    elif n < int("2EE5E", 16):
+        return 26  # CJK Unified Ideographs Extension I
+    elif n < int("2F800", 16):
+        return 27  # Missing
+    elif n < int("2FA1E", 16):
+        return 28  # CJK Compatibility Ideographs Supplement
+    elif n < int("2FA20", 16):
+        return 29  # Missing
     elif n < int("30000", 16):
-        return 8
+        return 30  # Gap
+    elif n < int("3134B", 16):
+        return 31  # CJK Unified Ideographs Extension G
+    elif n < int("31350", 16):
+        return 32  # Missing
+    elif n < int("323B0", 16):
+        return 33  # CJK Unified Ideographs Extension H
+    elif n < int("3347A", 16):
+        return 34  # CJK Unified Ideographs Extension J
+    elif n < int("33480", 16):
+        return 35  # Missing
     else:
-        return 9
+        return 36  # Gap
 
 
 def isNextUnicode(smallerunicode: str, biggerunicode: str) -> bool:
-    if smallerunicode == "U+4DBF" and biggerunicode == "U+4E00":  # U+4DBE U+4E00
-        return True
-    elif smallerunicode == "U+9FFF" and biggerunicode == "U+F900":  # U+9FFA U+FA11
-        return True
-    elif smallerunicode == "U+FAD9" and biggerunicode == "U+20000":  # U+FA18 U+2003E
-        return True
-    elif smallerunicode == "U+2FA1D" and biggerunicode == "U+30000":  # U+2F8D2 U+30021
-        return True
+    match smallerunicode, biggerunicode:
+        case "U+2E99", "U+2E9B":    # CJK Radicals Supplement - Bridges missing
+            return True
+        case "U+2EF3", "U+2F00":    # CJK Radicals Supplement - Kangxi Radicals
+            return True
+        case "U+2FD5", "U+3400":    # Kangxi Radicals - CJK Unified Ideographs Extension A
+            return True
+        case "U+4DBF", "U+4E00":    # CJK Unified Ideographs Extension A - CJK Unified Ideographs
+            return True
+        case "U+9FFF", "U+F900":    # CJK Unified Ideographs - CJK Compatibility Ideographs
+            return True
+        case "U+FA6D", "U+FA70":    # CJK Compatibility Ideographs - Bridges missing
+            return True
+        case "U+FAD9", "U+20000":   # CJK Compatibility Ideographs - CJK Unified Ideographs Extension B
+            return True
+        case "U+2A6DF", "U+2A700":  # CJK Unified Ideographs Extension B - CJK Unified Ideographs Extension C
+            return True
+        case "U+2B73F", "U+2B740":  # CJK Unified Ideographs Extension C - CJK Unified Ideographs Extension D
+            return True
+        case "U+2B81D", "U+2B820":  # CJK Unified Ideographs Extension D - CJK Unified Ideographs Extension E
+            return True
+        case "U+2CEAD", "U+2CEB0":  # CJK Unified Ideographs Extension E - CJK Unified Ideographs Extension F
+            return True
+        case "U+2EBE0", "U+2EBF0":  # CJK Unified Ideographs Extension F - CJK Unified Ideographs Extension I
+            return True
+        case "U+2EE5D", "U+2F800":  # CJK Unified Ideographs Extension I - CJK Compatibility Ideographs Supplement
+            return True
+        case "U+2FA1D", "U+30000":  # CJK Compatibility Ideographs Supplement - CJK Unified Ideographs Extension G
+            return True
+        case "U+3134A", "U+31350":  # CJK Unified Ideographs Extension G - CJK Unified Ideographs Extension H
+            return True
+        case "U+323AF", "U+323B0":  # CJK Unified Ideographs Extension H - CJK Unified Ideographs Extension J
+            return True
 
     return getBlockNumber(smallerunicode) == getBlockNumber(biggerunicode) and int(biggerunicode[2:], 16) == int(smallerunicode[2:], 16)+1
 
 
 def getNextUnicode(smallerunicode: str) -> str:
-    if smallerunicode == "U+4DBF":
-        return "U+4E00"
-    elif smallerunicode == "U+9FFF":
-        return "U+F900"
-    elif smallerunicode == "U+FAD9":
-        return "U+20000"
-    elif smallerunicode == "U+2FA1D":
-        return "U+30000"
+    match smallerunicode:
+        case "U+2E99":   # CJK Radicals Supplement - Bridges missing
+            return "U+2E9B"
+        case "U+2EF3":   # CJK Radicals Supplement - Kangxi Radicals
+            return "U+2F00"
+        case "U+2FD5":   # Kangxi Radicals - CJK Unified Ideographs Extension A
+            return "U+3400"
+        case "U+4DBF":   # CJK Unified Ideographs Extension A - CJK Unified Ideographs
+            return "U+4E00"
+        case "U+9FFF":   # CJK Unified Ideographs - CJK Compatibility Ideographs
+            return "U+F900"
+        case "U+FA6D":   # CJK Compatibility Ideographs - Bridges missing
+            return "U+FA70"
+        case "U+FAD9":   # CJK Compatibility Ideographs - CJK Unified Ideographs Extension B
+            return "U+20000"
+        case "U+2A6DF":  # CJK Unified Ideographs Extension B - CJK Unified Ideographs Extension C
+            return "U+2A700"
+        case "U+2B73F":  # CJK Unified Ideographs Extension C - CJK Unified Ideographs Extension D
+            return "U+2B740"
+        case "U+2B81D":  # CJK Unified Ideographs Extension D - CJK Unified Ideographs Extension E
+            return "U+2B820"
+        case "U+2CEAD":  # CJK Unified Ideographs Extension E - CJK Unified Ideographs Extension F
+            return "U+2CEB0"
+        case "U+2EBE0":  # CJK Unified Ideographs Extension F - CJK Unified Ideographs Extension I
+            return "U+2EBF0"
+        case "U+2EE5D":  # CJK Unified Ideographs Extension I - CJK Compatibility Ideographs Supplement
+            return "U+2F800"
+        case "U+2FA1D":  # CJK Compatibility Ideographs Supplement - CJK Unified Ideographs Extension G
+            return "U+30000"
+        case "U+3134A":  # CJK Unified Ideographs Extension G - CJK Unified Ideographs Extension H
+            return "U+31350"
+        case "U+323AF":  # CJK Unified Ideographs Extension H - CJK Unified Ideographs Extension J
+            return "U+323B0"
 
     return "U+"+hex(int(smallerunicode[2:], 16)+1)[2:].upper()
 
 
+def unicodeGEQ(uni1: str, uni2: str) -> bool:
+    n1 = int(uni1[2:], 16)
+    n2 = int(uni2[2:], 16)
+    return n1 >= n2
+
+
 def getUnicodesBetween(smallerunicode: str, biggerunicode: str) -> list[str]:
+    flag = False
+    if smallerunicode == "U+2E7F":
+        flag = True
     begin = int(smallerunicode[2:], 16)
     end = int(biggerunicode[2:], 16)
     output = []
@@ -83,7 +197,7 @@ def getUnicodesBetween(smallerunicode: str, biggerunicode: str) -> list[str]:
         if not isNextUnicode(previous, unicode):
             unicode = getNextUnicode(previous)
             n = int(unicode[2:], 16)
-        if unicode == biggerunicode:
+        if unicodeGEQ(unicode, biggerunicode):
             break
         output.append(unicode)
         previous = unicode
@@ -195,6 +309,12 @@ def __main__():
         CSemanticVariant) + ";" + makestr(CContextDependentVariant) + ";" + makestr(CShapeVariant) + ";" + makestr(AMistakenVariant))
     unicode = "U+3347A"
     for unicodeinbetween in getUnicodesBetween(currentunicode, unicode):
+        tobeadded = unicodeinbetween + ";" + \
+            chr(int(unicodeinbetween[2:], 16)
+                ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
+        output.append(tobeadded)
+
+    for unicodeinbetween in getUnicodesBetween("U+2E7F", "U+2EF4"):
         tobeadded = unicodeinbetween + ";" + \
             chr(int(unicodeinbetween[2:], 16)
                 ) + ";NaN;NaN;NaN;NaN;NaN;NaN"
