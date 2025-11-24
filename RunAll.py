@@ -1,10 +1,11 @@
-from Variants import ExtractCommonality
-from Variants import ExtractVariants
-from Radicals import ExtractRadicals
-from Decomposition import ExtractDecomp
-from Data import ExtractJouyou
-from Variants import ExtractHSK
 import os
+from Data import ExtractJouyou
+from Decomposition import ExtractDecomp
+from Decomposition import ExtractDecompFromWiktionary
+from Radicals import ExtractRadicals
+from Variants import ExtractVariants
+from Variants import ExtractCommonality
+from Variants import ExtractHSK
 
 ############################# DATA#############################
 cwd = os.getcwd()
@@ -15,6 +16,8 @@ ExtractJouyou.__main__()
 ######################## DECOMPOSITION#########################
 os.chdir(cwd + "/Decomposition/")
 ExtractDecomp.__main__()
+# DO NOT RUN THE WEBSCRAPER EVERY TIME!!!!!
+# ExtractDecompFromWiktionary.__main__()
 ###############################################################
 
 ########################### RADICALS###########################
@@ -27,5 +30,4 @@ os.chdir(cwd + "/Variants/")
 ExtractVariants.__main__()
 ExtractCommonality.__main__()
 ExtractHSK.__main__()
-# DO NOT RUN THE WEBSCRAPER EVERY TIME!!!!!
 ###############################################################

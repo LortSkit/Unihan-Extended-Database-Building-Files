@@ -1,10 +1,10 @@
 # Unihan-Extended-Database-Building-Files
 
-The repo is a collection of python files that will build a merged database of han characters in unicode from several sources (found at the bottom of this file)
+The repo is a collection of python files that will build a merged database of han characters in unicode from several sources (found at the bottom of this file). For certain generated files whose creation script have a long runtime like, e.g. `decomp_scrape.text`, they will be saved in the `Data/Generated/` folder. The others might later be accessible through Github Pages, but this is currently a TODO.
 
 # Resources
 
-This is how to attain all the resources needed for the `RunAll.py` script to run. When attained, they have to be placed in the `Data/Resources/` folder - NOTE: `characterdecomposition.csv` as well as `JouyouKanjiExcelt.txt` need a little extra work to be made in the right format, so refer to their respective guides below for more information.
+This is how to attain all the resources needed for the `RunAll.py` script to run. When attained, they have to be placed in the `Data/Resources/` folder - NOTE: `JouyouKanjiExcelt.txt` needs a little extra work to be made in the right format, so refer to its guide below for more information.
 
 For explanation of unihan.zip, please see [The tr38 report from Unicode](https://www.unicode.org/reports/tr38/). For any files used, please gather them from here, and place them in the `Data/` folder
 
@@ -13,47 +13,25 @@ For explanation of unihan.zip, please see [The tr38 report from Unicode](https:/
 1. `Unihan_IRGSources.txt` - Used in files `Radicals/ExtractRadicals.py`.
 2. `Unihan_Variants.txt` - Used in files `Variants/ExtractVariants.py`.
 
-`EquivalentUnifiedIdeograph.txt` can be found [here](https://www.unicode.org/Public/17.0.0/ucd/EquivalentUnifiedIdeograph.txt)
+For `JouyouKanjiExcelt.txt`, please copy the link of [this Wikipedia page](https://en.wikipedia.org/wiki/List_of_j%C5%8Dy%C5%8D_kanji), and then follow the steps of the 'Jouyou Kanji List Excel Guide' section down below
 
-- Used in files `Radicals/ExtractRadicals.py`
+- Used in files `Data/ExtractJouyou.py` (and indirectly in `Variants/ExtractCommonality.py`)
 
 `char_v1.0.txt` can be found in [this repo](https://github.com/catusf/tudien/releases/tag/V2.6)
 
 - Used in file `Decomposition/ExtractDecomp.py`.
 
-`characterdecomposition.csv` can be found from [this library](https://pypi.org/project/cjklib/) HOWEVER how to get this csv is not so obvious, so please see the 'CJKLib Guide' section down below
+`EquivalentUnifiedIdeograph.txt` can be found [here](https://www.unicode.org/Public/17.0.0/ucd/EquivalentUnifiedIdeograph.txt)
 
-- Used in files `TODO`.
+- Used in files `Radicals/ExtractRadicals.py`
 
 For the commonly used characters in China in three files (`level-1.txt`, `level-2.txt`, and `level-3.txt`) please go to [this repo](https://github.com/shengdoushi/common-standard-chinese-characters-table)
 
 - Used in files `Variants/ExtractCommonality.py`.
 
-For `JouyouKanjiExcelt.txt`, please copy the link of [this Wikipedia page](https://en.wikipedia.org/wiki/List_of_j%C5%8Dy%C5%8D_kanji), and then follow the steps of the 'Jouyou Kanji List Excel Guide' section down below
-
-- Used in files `Data/ExtractJouyou.py` (and indirectly in `Variants/ExtractCommonality.py`)
-
 `charlist.txt` can be found in [this repo](https://github.com/elkmovie/hsk30/blob/main)
 
 - Used in files `ExtractHSK.py`.
-
-## CJKLib Guide
-
-First, from [the library previously mentioned](https://pypi.org/project/cjklib/), please do the following:
-
-1. Install python 2 (2.4+ at least, but I used [version 2.7.18](https://www.python.org/downloads/release/python-2718/))
-2. With this installation, do `pip install cjklib`
-3. Now, locate your python install (likely at `C:\Python27\`), and locate the follwing folder: `Lib\site-packages\cjklib\data\`, within it is the `characterdecomposition.csv`
-
-### Bonus steps (Unneccessary)
-
-This is mostly because theres an unexplained command tied to this folder, which goes un explained anywhere, and since I figured out how to make it work with no errors, I figured I'd finish the guide off with these bonus steps.
-
-In case the `Lib\site-packages\cjklib\` folder is missing the `cjklib.db` file, they can be rebuilt in the following way:
-
-4. In the `Lib\site-packages\cjklib\data\` folder, place [an old 2012 version of Unihan.zip](https://www.unicode.org/Public/zipped/6.2.0/Unihan.zip) - (Newer versions of Unihan.zip break the script, there might be a version newer than this one that works though, idk)
-5. Run the command `buildcjkdb -r build cjklibData` - (It should be added to your path upon pip install, but if not, you can find the `C:\Python27\Scripts\buildcjkdb.exe` file and maybe run it there?)
-6. After running the command and waiting, the database has
 
 ## Jouyou excel guide
 
