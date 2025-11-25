@@ -10,17 +10,13 @@ import numpy as np
 import pandas as pd
 from ExtractDecompFromWiktionary import getDecomp
 
-
-def jouyoueval(x):
-    if x == "":
-        return np.nan
-
-    return list(x)
-
-
 datafolder = "../Data/"
 resources = datafolder + "Resources/"
 generated = datafolder + "Generated/"
+
+
+def undoeval(x):
+    return "NaN" if x is np.nan else "[" + ",".join(x) + "]" if type(x) == type([""]) else x
 
 
 def __main__():
@@ -50,6 +46,8 @@ def __main__():
             [[unicode, char, decomp.__repr__().replace("'", "")]], columns=["Unicode", "Char", "Decomposition"]).set_index("Unicode")])
     cleaner = cleaner.sort_values(
         by="Unicode", key=lambda col: pd.Series([int(x[2:], 16) for x in col]))
+    cleaner["Decomposition"] = list(
+        map(undoeval, cleaner["Decomposition"].tolist()))
     cleaner.to_csv(generated + "decomp_scrape_clean.text",
                    sep=";", encoding="utf-8")
 
