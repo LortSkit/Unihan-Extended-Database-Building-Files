@@ -1,7 +1,8 @@
 import os
 from Data import ExtractJouyou
-from Decomposition import ExtractDecomp
-from Decomposition import ExtractDecompFromWiktionary
+from Decomposition.OLD import ExtractDecomp
+from Decomposition.OLD import ExtractDecompFromWiktionary
+from Decomposition import ExtractDecompCustoms
 from Radicals import ExtractRadicals
 from Variants import ExtractVariants
 from Variants import ExtractCommonality
@@ -14,10 +15,12 @@ ExtractJouyou.__main__()
 ###############################################################
 
 ######################## DECOMPOSITION#########################
-os.chdir(cwd + "/Decomposition/")
-ExtractDecomp.__main__()
+# os.chdir(cwd + "/Decomposition/OLD")
+# ExtractDecomp.__main__()
 # DO NOT RUN THE WEBSCRAPER EVERY TIME!!!!!
 # ExtractDecompFromWiktionary.__main__()
+os.chdir(cwd + "/Decomposition/")
+ExtractDecompCustoms.__main__()
 ###############################################################
 
 ########################### RADICALS###########################

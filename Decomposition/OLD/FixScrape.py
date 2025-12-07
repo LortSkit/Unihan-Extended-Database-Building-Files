@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from ExtractDecompFromWiktionary import getDecomp
 
-datafolder = "../Data/"
+datafolder = "../../Data/"
 resources = datafolder + "Resources/"
 generated = datafolder + "Generated/"
 

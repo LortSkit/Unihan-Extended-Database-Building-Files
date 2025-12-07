@@ -57,9 +57,9 @@ For `JouyouKanjiExcelt.txt`, please copy the link of [this Wikipedia page](https
 
 - Used in files `Data/ExtractJouyou.py` (and indirectly in `Variants/ExtractCommonality.py`)
 
-`char_v1.0.txt` can be found in [this repo](https://github.com/catusf/tudien/releases/tag/V2.6)
+`IDS.txt` can be found [here](https://www.babelstone.co.uk/CJK/IDS.TXT)
 
-- Used in file `Decomposition/ExtractDecomp.py`.
+- Used in file `Decomposition/ExtractDecompCustoms.py`.
 
 `EquivalentUnifiedIdeograph.txt` can be found [here](https://www.unicode.org/Public/17.0.0/ucd/EquivalentUnifiedIdeograph.txt)
 

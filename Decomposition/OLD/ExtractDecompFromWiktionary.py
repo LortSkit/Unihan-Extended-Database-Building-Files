@@ -4,7 +4,7 @@ import pandas as pd
 import re
 import os
 
-datafolder = "../Data/"
+datafolder = "../../Data/"
 resources = datafolder + "Resources/"
 generated = datafolder + "Generated/"
 

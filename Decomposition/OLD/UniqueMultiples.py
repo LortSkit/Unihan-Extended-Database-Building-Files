@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-datafolder = "../Data/"
+datafolder = "../../Data/"
 resources = datafolder + "Resources/"
 generated = datafolder + "Generated/"
 
